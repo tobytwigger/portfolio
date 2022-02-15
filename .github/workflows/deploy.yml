@@ -4,7 +4,6 @@ env:
   GITHUB_USERNAME: ${{ github.repository_owner }}
   REACT_APP_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This is automatically set by Github Actions
   USE_GITHUB_DATA: "true"
-  MEDIUM_USERNAME: "saadpasta" # Change this to your medium username
 on:
   push:
     branches:
@@ -24,9 +23,12 @@ jobs:
         run: |
           npm install
           npm run build
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+      - name: Clear old output
+        run: rm -r docs
+      - name: Save output as docs
+        run: mv build/ docs/
+      - name: Commit back
+        uses: EndBug/add-and-commit@v7
         with:
-          GITHUB_TOKEN : ${{ secrets.GITHUB_TOKEN }} # This is provided by GitHub.
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: build # The folder the action should deploy.
+          add: "['docs']"
+          branch: develop
